@@ -3,27 +3,20 @@ body {
 }
 
 #glcanvas {
-    position: absolute;
-    left: 10px;
-    top: 10px;
+    position: relative;
     width: 1024;
     height: 768;
     background-color: black;
 }
 
-#btn-orthografic {
-    left: 10px;
+.btn-camera {
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
 }
 
 #btn-perspective {
-    left: 350px;
-}
-
-.btn-camera {
-    position: absolute;
-    display: inline-block;
-    margin: 20px;
-    top: 768px;
+    margin-left: 30px;
 }
 
 .btn-camera span {

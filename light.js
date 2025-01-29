@@ -1,6 +1,6 @@
 export default class Light {
   constructor() {
-    // Primeira luz
+    // Luz PRINCIPAL
     this.pos1 = vec4.fromValues(-100, 100, 0, 1.0);
 
     this.amb_c1 = vec4.fromValues(1.0, 1.0, 1.0, 1.0);
@@ -13,7 +13,7 @@ export default class Light {
     this.esp_k1 = 0.3;
     this.esp_p1 = 5.0;
 
-    // Segunda luz (amarela)
+    // Luz Secundária (Amarela)
     this.pos2 = vec4.fromValues(100, 100, 0, 1.0);
 
     this.amb_c2 = vec4.fromValues(1.0, 1.0, 0.0, 1.0);
@@ -69,9 +69,5 @@ export default class Light {
     gl.uniform1f(espK2Loc, this.esp_k2);
     const espP2Loc = gl.getUniformLocation(program, "light2_esp_p");
     gl.uniform1f(espP2Loc, this.esp_p2);
-  }
-
-  updateLight() {
-    // TODO: Change light positions dynamically (if needed)
   }
 }

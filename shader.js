@@ -1,27 +1,22 @@
 export default class Shader {
   static createShader(gl, type, source) {
-    var shader = gl.createShader(type);
+    const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      var info = gl.getShaderInfoLog(shader);
-      console.log('Could not compile WebGL program:' + info);
+      console.error("Erro ao compilar shader:", gl.getShaderInfoLog(shader));
     }
-
     return shader;
   }
 
   static createProgram(gl, vertexShader, fragmentShader) {
-    var program = gl.createProgram();
-
+    const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      var info = gl.getProgramInfoLog(program);
-      console.log('Could not compile WebGL program:' + info);
+      console.error("Erro ao linkar shader program:", gl.getProgramInfoLog(program));
     }
-
     return program;
   }
 

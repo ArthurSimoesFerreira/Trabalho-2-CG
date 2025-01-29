@@ -169,8 +169,6 @@ export class HalfEdgeDS {
     return [coords, scalars, normals, indices];
   }
 
-  estrela(v) { }
-
   changeNeighborsColor(v, color) {
     const neighbors = new Set();
     let startHE = v.he; // Starting half-edge at the vertex

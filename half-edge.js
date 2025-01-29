@@ -158,7 +158,7 @@ export class HalfEdgeDS {
       const v = this.vertices[vId];
 
       coords.push(...v.position);
-      scalars.push(vId / this.vertices.length);
+      scalars.push(v.scalar);
       normals.push(...v.normal);
     }
 
@@ -169,7 +169,7 @@ export class HalfEdgeDS {
     return [coords, scalars, normals, indices];
   }
 
-  estrela(v) {}
+  estrela(v) { }
 
   changeNeighborsColor(v, color) {
     const neighbors = new Set();

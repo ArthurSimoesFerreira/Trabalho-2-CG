@@ -119,8 +119,8 @@ export default class Mesh {
         sumX += parseFloat(parts[1]);
         sumY += parseFloat(parts[2]);
         sumZ += parseFloat(parts[3]);
-        } 
-        else if (type === "f") {
+      }
+      else if (type === "f") {
         for (let i = 1; i < parts.length; i++) {
           const vertex = parts[i].split("/");
           indices.push(parseInt(vertex[0]) - 1);
@@ -142,6 +142,10 @@ export default class Mesh {
     this.heds.build(vertices, indices); // Build the half-edge data structure
     // find MaxYvert neighbors
     //let neighbors = this.heds.findNeighbors(this.MaxYVert);
+
+    // Identificar os vértices das orelhas
+    const earVertices = this.heds.vertices.filter(v => v.position[1] > maxY - 0.2 * this.currentHeight);
+    earVertices.forEach(v => v.scalar = 1.0); // Marcar os vértices das orelhas com um escalar de 1.0
   }
 
   createShader(gl) {

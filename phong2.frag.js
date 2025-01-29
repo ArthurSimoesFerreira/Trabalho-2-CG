@@ -1,5 +1,5 @@
 export default
-`#version 300 es
+  `#version 300 es
 precision highp float;
 
 // Primeira luz
@@ -96,5 +96,10 @@ void main()
                             fatorEsp2 * light2_esp_k * light2_esp_c;
 
   // Cor final do vértice
-  minhaColor = 0.45 * fColor + 0.55 * (light1Contribution + light2Contribution);
+  // Se o escalar for 1.0, colorir de vermelho
+  if (fScalar > 0.99) {
+    minhaColor = vec4(1.0, 0.0, 0.0, 1.0); // Vermelho
+  } else {
+    minhaColor = 0.45 * fColor + 0.55 * (light1Contribution + light2Contribution);
+  }
 }`;

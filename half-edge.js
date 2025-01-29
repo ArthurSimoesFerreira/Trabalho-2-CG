@@ -1,30 +1,25 @@
 export class Vertex {
-  constructor(vid, x, y, z) {
-    this.vid = vid;
-
+  constructor(vertexId, x, y, z) {
+    this.vertexId = vertexId;
     this.position = [x, y, z, 1];
     this.normal = [0.0, 0.0, 0.0, 0.0];
-
     this.scalar = 0.0;
-
-    this.he = null;
+    this.halfEdge = null;
   }
 }
 
 export class HalfEdge {
   constructor(vertex) {
     this.vertex = vertex;
-
     this.next = null;
     this.face = null;
-
     this.opposite = null;
   }
 }
 
 export class Face {
-  constructor(baseHe) {
-    this.baseHe = baseHe;
+  constructor(baseHalfEdge) {
+    this.baseHalfEdge = baseHalfEdge;
   }
 }
 
@@ -36,25 +31,18 @@ export class HalfEdgeDS {
   }
 
   isReady() {
-    return (
-      this.vertices.length > 0 &&
-      this.halfEdges.length > 0 &&
-      this.faces.length > 0
-    );
+    return this.vertices.length > 0 && this.halfEdges.length > 0 && this.faces.length > 0;
   }
 
   build(coords, trigs) {
-    // construção dos vértices
     for (let vid = 0; vid < coords.length; vid += 4) {
       const x = coords[vid];
       const y = coords[vid + 1];
       const z = coords[vid + 2];
-
       const v = new Vertex(vid / 4, x, y, z);
       this.vertices.push(v);
     }
 
-    // construção das faces & half-edges
     for (let tid = 0; tid < trigs.length; tid += 3) {
       const v0 = this.vertices[trigs[tid + 0]];
       const v1 = this.vertices[trigs[tid + 1]];
@@ -67,12 +55,10 @@ export class HalfEdgeDS {
       const face = new Face(he0);
       this.faces.push(face);
 
-      // atribuição das faces das half-edges
       he0.face = face;
       he1.face = face;
       he2.face = face;
 
-      // atribuição das next
       he0.next = he1;
       he1.next = he2;
       he2.next = he0;
@@ -81,58 +67,54 @@ export class HalfEdgeDS {
     }
 
     this.computeOpposites();
-    this.computeVertexHe();
-
+    this.computeVertexHalfEdge();
     this.computeNormals();
-
-    console.log(this);
   }
 
   computeOpposites() {
     const visited = {};
 
     for (let hid = 0; hid < this.halfEdges.length; hid++) {
-      const a = this.halfEdges[hid].vertex.vid;
-      const b = this.halfEdges[hid].next.vertex.vid;
+      const a = this.halfEdges[hid].vertex.vertexId;
+      const b = this.halfEdges[hid].next.vertex.vertexId;
 
-      const k = `k${Math.min(a, b)},${Math.max(a, b)}`;
+      const key = `k${Math.min(a, b)},${Math.max(a, b)}`;
 
-      if (visited[k] !== undefined) {
-        const op = visited[k];
+      if (visited[key] !== undefined) {
+        const op = visited[key];
         op.opposite = this.halfEdges[hid];
         this.halfEdges[hid].opposite = op;
-
-        delete visited[k];
+        delete visited[key];
       } else {
-        visited[k] = this.halfEdges[hid];
+        visited[key] = this.halfEdges[hid];
       }
     }
   }
 
-  computeVertexHe() {
+  computeVertexHalfEdge() {
     for (let hid = 0; hid < this.halfEdges.length; hid++) {
       const v = this.halfEdges[hid].vertex;
 
-      if (v.he === null) {
-        v.he = this.halfEdges[hid];
+      if (v.halfEdge === null) {
+        v.halfEdge = this.halfEdges[hid];
       } else if (this.halfEdges[hid].opposite === null) {
-        v.he = this.halfEdges[hid];
+        v.halfEdge = this.halfEdges[hid];
       }
     }
   }
 
   computeNormals() {
     for (let fId = 0; fId < this.faces.length; fId++) {
-      const he0 = this.faces[fId].baseHe;
-      const he1 = this.faces[fId].baseHe.next;
-      const he2 = this.faces[fId].baseHe.next.next;
+      const he0 = this.faces[fId].baseHalfEdge;
+      const he1 = this.faces[fId].baseHalfEdge.next;
+      const he2 = this.faces[fId].baseHalfEdge.next.next;
 
       const v0 = he0.vertex.position;
       const v1 = he1.vertex.position;
       const v2 = he2.vertex.position;
 
-      const vec1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]]; // v1-v0
-      const vec2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]]; // v2-v0
+      const vec1 = [v1[0] - v0[0], v1[1] - v0[1], v1[2] - v0[2]];
+      const vec2 = [v2[0] - v0[0], v2[1] - v0[1], v2[2] - v0[2]];
 
       const n = [
         vec1[1] * vec2[2] - vec1[2] * vec2[1],
@@ -156,14 +138,13 @@ export class HalfEdgeDS {
 
     for (let vId = 0; vId < this.vertices.length; vId++) {
       const v = this.vertices[vId];
-
       coords.push(...v.position);
       scalars.push(v.scalar);
       normals.push(...v.normal);
     }
 
     for (let hid = 0; hid < this.halfEdges.length; hid++) {
-      indices.push(this.halfEdges[hid].vertex.vid);
+      indices.push(this.halfEdges[hid].vertex.vertexId);
     }
 
     return [coords, scalars, normals, indices];
@@ -171,21 +152,17 @@ export class HalfEdgeDS {
 
   changeNeighborsColor(v, color) {
     const neighbors = new Set();
-    let startHE = v.he; // Starting half-edge at the vertex
+    let startHE = v.halfEdge;
     let currentHE = startHE;
 
-    // Traverse through all connected vertices
     do {
-      const neighbor = currentHE.next.vertex; // The next vertex in the edge loop
+      const neighbor = currentHE.next.vertex;
       neighbors.add(neighbor);
-
-      // Move to the opposite's next half-edge to continue traversal
       currentHE = currentHE.opposite?.next;
     } while (currentHE && currentHE !== startHE);
 
-    // Change the color of each neighbor
     neighbors.forEach((neighbor) => {
-      neighbor.color = color; // Assuming each vertex has a `color` property
+      neighbor.color = color;
     });
   }
 }

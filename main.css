@@ -1,0 +1,28 @@
+body { 
+    background-color: rgb(255, 255, 255);
+}
+
+#glcanvas {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    width: 1024;
+    height: 768;
+    background-color: black;
+}
+
+#btn-ortho {
+    position: absolute;
+    left: 10px;
+    top: 800px;
+    width: 100px;
+    height: 50px;
+}
+
+#btn-persp {
+    position: absolute;
+    left: 120px;
+    top: 800px;
+    width: 100px;
+    height: 50px;
+}

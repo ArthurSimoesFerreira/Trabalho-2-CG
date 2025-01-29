@@ -67,7 +67,7 @@ window.onload = () => {
   const app = new Main();
   app.draw();
 
-  document.getElementById("btn-orthografic").addEventListener("click", () => {
+  document.getElementById("btn-orthogonal").addEventListener("click", () => {
     app.scene.cam.currentMode = "ortho";
     app.scene.cam.updateProjectionMatrix();
     app.scene.cam.updateViewMatrix();

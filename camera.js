@@ -1,75 +1,60 @@
 export default class Camera {
   constructor(gl) {
-    // Posição da camera
-    this.eye = vec3.fromValues(1.0, 1.0, 1.0);
-    this.at = vec3.fromValues(0.0, 0.0, 0.0);
-    this.up = vec3.fromValues(0.0, 1.0, 0.0);
+    this.eyePosition = vec3.fromValues(1.0, 1.0, 1.0);
+    this.lookAtPosition = vec3.fromValues(0.0, 0.0, 0.0);
+    this.upVector = vec3.fromValues(0.0, 1.0, 0.0);
 
-    // Parâmetros da projeção
-    this.fovy = Math.PI / 2;
-    this.aspect = gl.canvas.width / gl.canvas.height;
+    this.fieldOfView = Math.PI / 2;
+    this.aspectRatio = gl.canvas.width / gl.canvas.height;
 
-    this.near = 0.1;
-    this.far = 1000.0;
+    this.nearPlane = 0.1;
+    this.farPlane = 1000.0;
 
-    // Configurações da câmera ortográfica
     this.left = -100;
     this.right = 100;
     this.top = 100;
     this.bottom = -100;
 
-    this.angle = 0;
-    //this.type = "perspective";
+    this.rotationAngle = 0;
     this.currentMode = "ortho";
 
-    // Matrizes View e Projection
-    this.view = mat4.create();
-    this.proj = mat4.create();
+    this.viewMatrix = mat4.create();
+    this.projectionMatrix = mat4.create();
   }
 
   getView() {
-    return this.view;
+    return this.viewMatrix;
   }
 
   getProj() {
-    return this.proj;
+    return this.projectionMatrix;
   }
 
   updateViewMatrix() {
-    mat4.identity(this.view);
+    mat4.identity(this.viewMatrix);
     if (this.currentMode === "perspective") {
-      // Câmera perspectiva: orbita em torno da origem
-      this.angle += 0.01; // Incremento para simular órbita
+      this.rotationAngle += 0.01;
       const radius = 150.0;
 
-      this.eye = vec3.fromValues(
-        radius * Math.cos(this.angle),
-        radius * Math.sin(this.angle),
+      this.eyePosition = vec3.fromValues(
+        radius * Math.cos(this.rotationAngle),
+        radius * Math.sin(this.rotationAngle),
         radius * 0.7
       );
-      mat4.lookAt(this.view, this.eye, this.at, this.up);
+      mat4.lookAt(this.viewMatrix, this.eyePosition, this.lookAtPosition, this.upVector);
     } else if (this.currentMode === "ortho") {
-      // Câmera ortogonal: fixa em (50, 50, 50) olhando para a origem
-      this.eye = vec3.fromValues(50, 50, 50);
-      this.at = vec3.fromValues(0, 0, 0);
-      mat4.lookAt(this.view, this.eye, this.at, this.up);
+      this.eyePosition = vec3.fromValues(50, 50, 50);
+      this.lookAtPosition = vec3.fromValues(0, 0, 0);
+      mat4.lookAt(this.viewMatrix, this.eyePosition, this.lookAtPosition, this.upVector);
     }
   }
 
   updateProjectionMatrix() {
-    mat4.identity(this.proj);
+    mat4.identity(this.projectionMatrix);
     if (this.currentMode === "perspective") {
-      mat4.perspective(this.proj, this.fovy, this.aspect, this.near, this.far);
+      mat4.perspective(this.projectionMatrix, this.fieldOfView, this.aspectRatio, this.nearPlane, this.farPlane);
     } else if (this.currentMode === "ortho") {
-      mat4.ortho(
-        this.proj,
-        this.left,
-        this.right,
-        this.bottom,
-        this.top,
-        this.near,
-        this.far
-      );
+      mat4.ortho(this.projectionMatrix, this.left, this.right, this.bottom, this.top, this.nearPlane, this.farPlane);
     }
   }
 

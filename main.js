@@ -25,7 +25,6 @@ class Scene {
 
   draw(gl) {
     this.cam.updateCam();
-    this.light.updateLight();
 
     this.mesh.draw(gl, this.cam, this.light);
     //this.copy.draw(gl, this.cam, this.light);
@@ -68,14 +67,14 @@ window.onload = () => {
   const app = new Main();
   app.draw();
 
-  document.getElementById("btn-ortho").addEventListener("click", () => {
+  document.getElementById("btn-orthografic").addEventListener("click", () => {
     app.scene.cam.currentMode = "ortho";
     app.scene.cam.updateProjectionMatrix();
     app.scene.cam.updateViewMatrix();
     console.log("Ortho");
   });
 
-  document.getElementById("btn-persp").addEventListener("click", () => {
+  document.getElementById("btn-perspective").addEventListener("click", () => {
     app.scene.cam.currentMode = "perspective";
     app.scene.cam.updateProjectionMatrix();
     app.scene.cam.updateViewMatrix();

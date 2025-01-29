@@ -67,14 +67,14 @@ window.onload = () => {
   const app = new Main();
   app.draw();
 
-  document.getElementById("btn-ortho").addEventListener("click", () => {
+  document.getElementById("btn-orthografic").addEventListener("click", () => {
     app.scene.cam.currentMode = "ortho";
     app.scene.cam.updateProjectionMatrix();
     app.scene.cam.updateViewMatrix();
     console.log("Ortho");
   });
 
-  document.getElementById("btn-persp").addEventListener("click", () => {
+  document.getElementById("btn-perspective").addEventListener("click", () => {
     app.scene.cam.currentMode = "perspective";
     app.scene.cam.updateProjectionMatrix();
     app.scene.cam.updateViewMatrix();
